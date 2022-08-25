@@ -1,0 +1,40 @@
+.app-container .body {
+    grid-area: body;
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+.add-timer-button {
+    font-size: 40px;
+    width: 45px;
+    height: 45px;
+    line-height: 40px;
+    padding: 0;
+    border-radius: 50%;
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    border: 3px solid darkgray;
+    background-color: lightgray;
+    cursor: pointer;
+}
+
+.add-timer-button:hover {
+    background-color: darkgray;
+}
+
+.app-container .body .class-period-container {
+    height: 500px;
+    width: 500px;
+    position: absolute;
+    transition-property: bottom, left, border, transform;
+    transition-duration: 1s;
+    transition-timing-function: ease-in-out;
+}
+
+.app-container .body .timers {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}

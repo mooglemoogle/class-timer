@@ -1,26 +1,26 @@
-import React from 'react';
-import logo from './logo.svg';
+import { FC, useState } from 'react';
 import './App.css';
+import { Header } from './components/Header';
+import { getDate } from './helpers';
+import { useInterval } from './hooks/useInterval';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+import { DailySchedule, Schedules } from './config/BellSchedule';
+import { Body } from './components/Body';
+
+const App: FC = () => {
+    const [currentSchedule, setCurrentSchedule] = useState<DailySchedule>(Schedules[0]);
+
+    return (
+        <div
+            className="app-container"
+            style={{
+                background: `radial-gradient(at 100vw 100vh, transparent 70%, ${currentSchedule.color})`,
+            }}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+            <Header schedules={Schedules} currentSchedule={currentSchedule.name} setSchedule={setCurrentSchedule} />
+            <Body currentSchedule={currentSchedule} />
+        </div>
+    );
+};
 
 export default App;

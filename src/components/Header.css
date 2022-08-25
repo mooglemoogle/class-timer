@@ -1,0 +1,48 @@
+.app-container > header {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    grid-template-rows: 1fr;
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+}
+
+.app-container > header .title {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 75px;
+}
+  
+.app-container > header .date {
+    font-size: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.app-container > header .date > .time {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.app-container > header .date > .time > div {
+    width: 40px;
+    text-align: left;
+    margin-left: 4px;
+    font-variant-numeric: tabular-nums;
+}
+
+.app-container > header .date > .time > div:first-child {
+    text-align: right;
+    margin-right: 4px;
+    font-variant-numeric: tabular-nums;
+}
+
+.app-container > header .date > select {
+    width: 100px;
+    margin-top: 10px;
+}
