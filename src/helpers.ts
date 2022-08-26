@@ -67,7 +67,7 @@ export const getTodayMessage = (date: Date) => {
     return `${formatDayOfMonth(date)} of ${getMonth(date)}`
 }
 
-const getMinSecString = (value: number) => {
+export const getTwoDigitNumber = (value: number) => {
     if (value >= 10) {
         return value;
     } else {
@@ -89,8 +89,8 @@ export const getTime = (date: Date) => {
     }
     return {
         hour,
-        minute: getMinSecString(date.getMinutes()),
-        second: getMinSecString(date.getSeconds()),
+        minute: getTwoDigitNumber(date.getMinutes()),
+        second: getTwoDigitNumber(date.getSeconds()),
         ap,
     };
 }

@@ -37,7 +37,7 @@ export const ClassPeriodTimer: FC<ClassPeriodTimerProps> = memo(({ className, cu
             targetTime = currentPeriod.end;
             if (currentPeriod.break) {
                 const nextPeriod = currentSchedule.schedule[currentPeriodIndex + 1];
-                message = `Class is over! Time until ${nextPeriod.name}:`;
+                message = `Time until ${nextPeriod.name}:`;
             } else {
                 message = `This is ${currentPeriod.name}. Time remaining:`;
             }

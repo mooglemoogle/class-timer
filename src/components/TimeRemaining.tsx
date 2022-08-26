@@ -3,21 +3,7 @@ import { FC, memo } from 'react';
 import classnames from 'classnames';
 import './TimeRemaining.css';
 import { useCurrentDate } from '../hooks/useCurrentDate';
-
-interface TimePartProps {
-    className?: string;
-    value: number;
-    label: string;
-}
-
-const TimePart: FC<TimePartProps> = ({ className, value, label }) => {
-    return (
-        <div className={classnames('time-part', className)}>
-            <div className={'value'}>{value}</div>
-            <div className={'label'}>{label}</div>
-        </div>
-    );
-};
+import { getTwoDigitNumber } from '../helpers';
 
 export interface TimeRemainingProps {
     className?: string;
@@ -35,14 +21,12 @@ export const TimeRemaining: FC<TimeRemainingProps> = memo(({ className, endTime 
     });
 
     const showHours = remaining.hours && remaining.hours > 0;
-    const showMinutes = showHours || (remaining.minutes && remaining.minutes > 0);
-    const showSeconds = showHours || showMinutes || (remaining.seconds && remaining.seconds > 0);
 
     return (
         <div className={classnames('remaining-container', className)}>
-            {showHours ? <TimePart value={remaining.hours || 0} label={remaining.hours === 1 ? 'hour,' : 'hours,'} /> : null}
-            {showMinutes ? <TimePart value={remaining.minutes || 0} label={remaining.minutes === 1 ? 'minute,' : 'minutes,'} /> : null}
-            {showSeconds ? <TimePart value={remaining.seconds || 0} label={remaining.seconds === 1 ? 'second' : 'seconds'} /> : null}
+            {showHours ? <div className="time-part">{`${remaining.hours} :`}</div> : null}
+            <div className="time-part">{`${getTwoDigitNumber(remaining.minutes || 0)} :`}</div>
+            <div className="time-part">{`${getTwoDigitNumber(remaining.seconds || 0)}`}</div>
         </div>
     );
 });

@@ -31,7 +31,7 @@ export const Header: FC<HeaderProps> = memo(({ schedules, currentSchedule, setSc
     const formattedTime = getTime(currentDate);
     return (
         <header className="header">
-            <div className="title">{"Welcome to Ms. Rock's Classroom!"}</div>
+            <div className="title">{"Ms. Rock's Classroom"}</div>
             <div className="date">
                 <div>{getWeekday(currentDate)}</div>
                 <div>{getTodayMessage(currentDate)}</div>
