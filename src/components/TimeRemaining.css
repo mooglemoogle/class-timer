@@ -10,13 +10,15 @@
     font-size: 70px;
     font-variant-numeric: tabular-nums;
     margin-right: 9px;
+    font-weight: bold;
 }
 
 
 .remaining-container.time-up {
     animation: times-up 3s infinite;
     justify-content: center;
-    font-size: 60px;
+    font-size: 65px;
+    font-weight: bold;
 }
 
 @keyframes times-up {

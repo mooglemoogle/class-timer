@@ -1,6 +1,6 @@
 import { Duration, startOfDay, add, isAfter as dfnsIsAfter, isBefore as dfnsIsBefore } from "date-fns";
 
-const demoStartTime: number | undefined = undefined;
+const demoStartTime: number | undefined = 1664387109000;
 const demoRealStartTime: Date = new Date();
 
 export const getDate = () => {

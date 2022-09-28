@@ -2,7 +2,7 @@ import { FC, useCallback, useLayoutEffect, useState, useRef, memo } from 'react'
 import { v4 as uuidv4 } from 'uuid';
 import './Body.css';
 
-import { DailySchedule } from '../config/BellSchedule';
+import { DailySchedule, DayType } from '../config/BellSchedule';
 import { ClassPeriodTimer } from './ClassPeriodTimer';
 import { Timer } from './Timer';
 import { useCurrentDate } from '../hooks/useCurrentDate';
@@ -13,10 +13,11 @@ interface TimerItem {
 }
 
 export interface BodyProps {
-    currentSchedule: DailySchedule;
+    currentSchedule: DailySchedule | undefined;
+    dayType: DayType | undefined;
 }
 
-export const Body: FC<BodyProps> = memo(({ currentSchedule }) => {
+export const Body: FC<BodyProps> = memo(({ currentSchedule, dayType }) => {
     const currentDate = useCurrentDate();
     const currentDateRef = useRef(currentDate);
     currentDateRef.current = currentDate;
@@ -29,8 +30,8 @@ export const Body: FC<BodyProps> = memo(({ currentSchedule }) => {
             const body = document.getElementsByClassName('body')[0];
             if (body) {
                 const { height } = body.getBoundingClientRect();
-                setBigSizeRatio(height / 500);
-                setSmallSizeRatio((height / 500) * 0.3);
+                setBigSizeRatio(height / 400);
+                setSmallSizeRatio((height / 400) * 0.3);
             }
         };
         updateSizeRatio();
@@ -97,7 +98,7 @@ export const Body: FC<BodyProps> = memo(({ currentSchedule }) => {
                 </div>
             ) : null}
             <div className="class-period-container" style={classTimerStyle}>
-                <ClassPeriodTimer currentSchedule={currentSchedule} />
+                <ClassPeriodTimer currentSchedule={currentSchedule} dayType={dayType} />
             </div>
             <button className="add-timer-button" onClick={addTimer}>
                 +

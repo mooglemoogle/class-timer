@@ -1,24 +1,20 @@
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import './App.css';
 import { Header } from './components/Header';
-import { getDate } from './helpers';
-import { useInterval } from './hooks/useInterval';
-
-import { DailySchedule, Schedules } from './config/BellSchedule';
 import { Body } from './components/Body';
+import { useSchedule } from './hooks/useSchedule';
 
 const App: FC = () => {
-    const [currentSchedule, setCurrentSchedule] = useState<DailySchedule>(Schedules[0]);
-
+    const { effectiveSchedule, overrideSchedule, dayType } = useSchedule();
     return (
         <div
             className="app-container"
             style={{
-                background: `radial-gradient(at 100vw 100vh, transparent 70%, ${currentSchedule.color})`,
+                background: `radial-gradient(at 100vw 100vh, transparent 70%, ${effectiveSchedule?.color || 'transparent'})`,
             }}
         >
-            <Header schedules={Schedules} currentSchedule={currentSchedule.name} setSchedule={setCurrentSchedule} />
-            <Body currentSchedule={currentSchedule} />
+            <Header currentSchedule={effectiveSchedule} overrideSchedule={overrideSchedule} />
+            <Body currentSchedule={effectiveSchedule} dayType={dayType} />
         </div>
     );
 };

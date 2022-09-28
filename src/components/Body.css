@@ -25,7 +25,7 @@
 }
 
 .app-container .body .class-period-container {
-    height: 500px;
+    height: 400px;
     width: 500px;
     position: absolute;
     transition-property: bottom, left, border, transform;

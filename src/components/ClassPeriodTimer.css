@@ -11,16 +11,27 @@
 
 .class-period-timer .today-message {
     font-size: 40px;
+    text-align: center;
+    font-weight: bold;
 }
 
 .class-period-timer .period-message {
-    font-size: 30px;
+    font-size: 40px;
+    text-align: center;
+    margin-top: 15px;
 }
 
 .class-period-timer .time-remaining-container {
     height: 325px;
     width: 100%;
     display: flex;
-    padding-bottom: 120px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 25px;
     box-sizing: border-box;
+}
+
+.class-period-timer .time-remaining-container .remaining-label {
+    font-size: 30px;
 }
