@@ -1,28 +1,25 @@
 .remaining-container {
     display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    justify-content: space-around;
+}
+.pause-message {
+    font-size: 50px;
+}
+
+.remaining-parts {
+    display: flex;
     flex-direction: row;
     width: 100%;
     align-items: center;
     justify-content: center;
 }
 
-.remaining-container .time-part {
+.remaining-parts .time-part {
     font-size: 70px;
     font-variant-numeric: tabular-nums;
     margin-right: 9px;
     font-weight: bold;
-}
-
-
-.remaining-container.time-up {
-    animation: times-up 3s infinite;
-    justify-content: center;
-    font-size: 65px;
-    font-weight: bold;
-}
-
-@keyframes times-up {
-    0% { color: black; background: transparent; }
-    50% { color: white; background: red; }
-    100% { color: black; background: transparent; }
 }

@@ -1,5 +1,7 @@
 import { FC, useCallback, useLayoutEffect, useState, useRef, memo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import Fab from '@mui/material/Fab';
+import AddIcon from '@mui/icons-material/Add';
 import './Body.css';
 
 import { DailySchedule, DayType } from '../config/BellSchedule';
@@ -28,10 +30,16 @@ const serializeTimers = (timers: TimerItem[]) => {
 const deserializeTimers = (val: string) => {
     const initial = JSON.parse(val);
     return initial.map((item: any) => {
-        return {
+        const toReturn = {
             ...item,
-            targetTime: new Date(item.targetTime),
         } as TimerItem;
+        if (item.targetTime) {
+            toReturn.targetTime = new Date(item.targetTime);
+        }
+        if (item.pausedAt) {
+            toReturn.pausedAt = new Date(item.pausedAt);
+        }
+        return toReturn;
     });
 };
 
@@ -117,9 +125,18 @@ export const Body: FC<BodyProps> = memo(({ currentSchedule, dayType }) => {
             <div className="class-period-container" style={classTimerStyle}>
                 <ClassPeriodTimer currentSchedule={currentSchedule} dayType={dayType} />
             </div>
-            <button className="add-timer-button" onClick={addTimer}>
-                +
-            </button>
+            <Fab
+                sx={{
+                    position: 'absolute',
+                    right: '5px',
+                    top: '5px',
+                }}
+                onClick={addTimer}
+                size="small"
+                color="secondary"
+            >
+                <AddIcon />
+            </Fab>
         </div>
     );
 });

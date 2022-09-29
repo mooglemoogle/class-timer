@@ -24,6 +24,7 @@
     cursor: pointer;
     outline: none;
     text-align: center;
+    color: inherit;
 }
 
 .timer-container .remaining-container {
@@ -38,22 +39,23 @@
     padding: 5px;
 }
 
-.timer-container .buttons button:hover {
-    background-color: darkgray;
+.timer-container .buttons button {
+    background-color: white;
 }
 
-.remove-button {
-    padding: 3px;
-    border: 2px solid darkgray;
-    cursor: pointer;
-    border-radius: 50%;
-    position: absolute;
-    width: 30px;
-    height: 30px;
-    top: -15px;
-    right: -15px;
+.timer-container.time-up {
+    animation: times-up 3s infinite;
 }
 
-.remove-button:hover {
-    background-color: darkgray;
+.time-up-message {
+    justify-content: center;
+    text-align: center;
+    font-size: 65px;
+    font-weight: bold;
+}
+
+@keyframes times-up {
+    0% { color: black; background: transparent; }
+    50% { color: white; background: red; }
+    100% { color: black; background: transparent; }
 }
