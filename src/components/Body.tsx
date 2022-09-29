@@ -6,9 +6,13 @@ import { DailySchedule, DayType } from '../config/BellSchedule';
 import { ClassPeriodTimer } from './ClassPeriodTimer';
 import { Timer } from './Timer';
 import { useCurrentDate } from '../hooks/useCurrentDate';
+import { useLocalStorage } from '../hooks/useLocalStorage';
 
-interface TimerItem {
-    targetTime: Date;
+export interface TimerItem {
+    targetTime?: Date;
+    pausedAt?: Date;
+    timeLeftAtPause?: Duration;
+    name: string;
     id: string;
 }
 
@@ -17,13 +21,27 @@ export interface BodyProps {
     dayType: DayType | undefined;
 }
 
+const serializeTimers = (timers: TimerItem[]) => {
+    return JSON.stringify(timers);
+};
+
+const deserializeTimers = (val: string) => {
+    const initial = JSON.parse(val);
+    return initial.map((item: any) => {
+        return {
+            ...item,
+            targetTime: new Date(item.targetTime),
+        } as TimerItem;
+    });
+};
+
 export const Body: FC<BodyProps> = memo(({ currentSchedule, dayType }) => {
     const currentDate = useCurrentDate();
     const currentDateRef = useRef(currentDate);
     currentDateRef.current = currentDate;
     const [bigSizeRatio, setBigSizeRatio] = useState(1);
     const [smallSizeRatio, setSmallSizeRatio] = useState(1);
-    const [timers, setTimers] = useState<TimerItem[]>([]);
+    const [timers, setTimers] = useLocalStorage<TimerItem[]>('timers', [], serializeTimers, deserializeTimers);
 
     useLayoutEffect(() => {
         const updateSizeRatio = () => {
@@ -48,11 +66,11 @@ export const Body: FC<BodyProps> = memo(({ currentSchedule, dayType }) => {
         [timers, setTimers]
     );
     const updateTimer = useCallback(
-        (id: string, newTimer: Date) => {
+        (item: TimerItem) => {
             setTimers(
                 timers.map((timer) => {
-                    if (timer.id === id) {
-                        timer.targetTime = newTimer;
+                    if (timer.id === item.id) {
+                        return item;
                     }
                     return timer;
                 })
@@ -61,13 +79,11 @@ export const Body: FC<BodyProps> = memo(({ currentSchedule, dayType }) => {
         [timers, setTimers]
     );
     const addTimer = useCallback(() => {
-        const newTimer = new Date(currentDateRef.current.getTime());
-        newTimer.setMilliseconds(0);
         setTimers([
             ...timers,
             {
-                targetTime: newTimer,
                 id: uuidv4(),
+                name: 'New Timer',
             },
         ]);
     }, [setTimers, timers]);
@@ -78,22 +94,23 @@ export const Body: FC<BodyProps> = memo(({ currentSchedule, dayType }) => {
               transform: `scale(${smallSizeRatio})`,
               left: '10px',
               bottom: '10px',
-              border: '3px solid darkgray',
+              borderRadius: '10px',
+              boxShadow: '0px 0px 10px 0px #888',
           }
         : {
               transformOrigin: 'bottom',
               transform: `scale(${bigSizeRatio})`,
               bottom: '0',
               left: 'calc(50% - 250px)',
-              border: 'none',
+              boxShadow: 'none',
           };
 
     return (
         <div className="body">
             {timers.length ? (
                 <div className="timers">
-                    {timers.map(({ id, targetTime }) => (
-                        <Timer id={id} targetTime={targetTime} removeTimer={removeTimer} key={id} updateTargetTime={updateTimer} />
+                    {timers.map((item) => (
+                        <Timer item={item} removeTimer={removeTimer} key={item.id} updateTimer={updateTimer} />
                     ))}
                 </div>
             ) : null}

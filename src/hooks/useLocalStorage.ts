@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export function useLocalStorage<T>(key: string, initialValue: T) {
+export function useLocalStorage<T>(key: string, initialValue: T, serialize?: (item: T) => string, deserialize?: (item: string) => T) {
     // State to store our value
     // Pass initial state function to useState so logic is only executed once
     const [storedValue, setStoredValue] = useState<T>(() => {
@@ -11,7 +11,7 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
             // Get from local storage by key
             const item = window.localStorage.getItem(key);
             // Parse stored json or if none return initialValue
-            return item ? JSON.parse(item) : initialValue;
+            return item ? (deserialize ? deserialize(item) : JSON.parse(item)) : initialValue;
         } catch (error) {
             // If error also return initialValue
             console.log(error);
@@ -28,7 +28,8 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
             setStoredValue(valueToStore);
             // Save to local storage
             if (typeof window !== 'undefined') {
-                window.localStorage.setItem(key, JSON.stringify(valueToStore));
+                const val = serialize ? serialize(valueToStore) : JSON.stringify(valueToStore);
+                window.localStorage.setItem(key, val);
             }
         } catch (error) {
             // A more advanced implementation would handle the error case

@@ -10,7 +10,6 @@
 }
 
 .app-container > header {
-  border-bottom: 3px solid darkslategray;
   grid-area: header;
 }
 

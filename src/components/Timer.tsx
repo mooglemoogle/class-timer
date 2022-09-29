@@ -1,57 +1,67 @@
 import classNames from 'classnames';
 import { addSeconds, isBefore } from 'date-fns';
 import { ChangeEvent, FC, useState, memo, useRef, useMemo } from 'react';
+import Button from '@mui/material/Button';
+import ButtonGroup from '@mui/material/ButtonGroup';
 import { useCurrentDate } from '../hooks/useCurrentDate';
 import './Timer.css';
 import { TimeRemaining } from './TimeRemaining';
+import { TimerItem } from './Body';
 
 export interface TimerProps {
     className?: string;
-    targetTime: Date;
-    id: string;
-    updateTargetTime: (id: string, newTargetTime: Date) => void;
+    item: TimerItem;
+    updateTimer: (item: TimerItem) => void;
     removeTimer: (id: string) => void;
 }
 
-export const Timer: FC<TimerProps> = memo(({ className, targetTime, id, updateTargetTime, removeTimer }) => {
+export const Timer: FC<TimerProps> = memo(({ className, item, updateTimer, removeTimer }) => {
     const currentDate = useCurrentDate();
     const currentDateRef = useRef(currentDate);
     currentDateRef.current = currentDate;
-    const [started, setStarted] = useState(false);
-    const [title, setTitle] = useState('New Timer');
     const updateTitle = (event: ChangeEvent<HTMLInputElement>) => {
-        setTitle(event.currentTarget.value);
+        updateTimer({
+            ...item,
+            name: event.currentTarget.value,
+        });
     };
 
     const addTimeFuncs = useMemo(() => {
         return [30, 60, 120, 300, 600].reduce((acc, time) => {
             acc[time] = () => {
-                if (!started || isBefore(targetTime, currentDateRef.current)) {
-                    setStarted(true);
+                if (!item.targetTime || isBefore(item.targetTime, currentDateRef.current)) {
                     const newTargetTime = addSeconds(currentDateRef.current, time);
                     newTargetTime.setMilliseconds(0);
-                    updateTargetTime(id, newTargetTime);
+                    updateTimer({
+                        ...item,
+                        targetTime: newTargetTime,
+                    });
                 } else {
-                    const newTargetTime = addSeconds(targetTime, time);
-                    updateTargetTime(id, newTargetTime);
+                    const newTargetTime = addSeconds(item.targetTime, time);
+                    updateTimer({
+                        ...item,
+                        targetTime: newTargetTime,
+                    });
                 }
             };
             return acc;
         }, {} as Record<number, () => void>);
-    }, [id, started, targetTime, setStarted, updateTargetTime]);
-    const remove = () => removeTimer(id);
+    }, [item, updateTimer]);
+    const remove = () => removeTimer(item.id);
     return (
         <div className={classNames(className, 'timer-container')}>
             <div className="timer-name">
-                <input type="text" value={title} onChange={updateTitle} />
+                <input type="text" value={item.name} onChange={updateTitle} />
             </div>
-            {started ? <TimeRemaining endTime={targetTime} /> : null}
+            {item.targetTime ? <TimeRemaining endTime={item.targetTime} /> : null}
             <div className="buttons">
-                <button onClick={addTimeFuncs[600]}>+10m</button>
-                <button onClick={addTimeFuncs[300]}>+5m</button>
-                <button onClick={addTimeFuncs[120]}>+2m</button>
-                <button onClick={addTimeFuncs[60]}>+1m</button>
-                <button onClick={addTimeFuncs[30]}>+30s</button>
+                <ButtonGroup variant="outlined">
+                    <Button onClick={addTimeFuncs[600]}>+10m</Button>
+                    <Button onClick={addTimeFuncs[300]}>+5m</Button>
+                    <Button onClick={addTimeFuncs[120]}>+2m</Button>
+                    <Button onClick={addTimeFuncs[60]}>+1m</Button>
+                    <Button onClick={addTimeFuncs[30]}>+30s</Button>
+                </ButtonGroup>
             </div>
             <button className="remove-button" onClick={remove}>
                 X

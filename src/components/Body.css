@@ -28,7 +28,7 @@
     height: 400px;
     width: 500px;
     position: absolute;
-    transition-property: bottom, left, border, transform;
+    transition-property: bottom, left, box-shadow, transform;
     transition-duration: 1s;
     transition-timing-function: ease-in-out;
 }
