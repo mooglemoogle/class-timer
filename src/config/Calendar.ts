@@ -334,3 +334,11 @@ export const Calendar: Record<number, Record<number, CalendarItem>> = {
         20: { m: 5, d: 20, dt: DayType.TEACHER_WORKDAY },
     },
 };
+
+export const getCalendarItem = (date: Date) => {
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+
+    const dayItem = Calendar[month][day];
+    return dayItem;
+};

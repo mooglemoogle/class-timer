@@ -1,7 +1,7 @@
 import { addDays, differenceInMilliseconds, startOfDay, isAfter } from 'date-fns';
 import { useCallback, useState } from 'react';
 import { DailySchedule, DayType, OffDays, Schedules } from '../config/BellSchedule';
-import { Calendar, CalendarItem } from '../config/Calendar';
+import { CalendarItem, getCalendarItem } from '../config/Calendar';
 import { getDate } from '../helpers';
 import { useInterval } from './useInterval';
 
@@ -28,14 +28,6 @@ const getSchedule = (dayItem: CalendarItem) => {
             schedule,
         } as ScheduleItem;
     }
-};
-
-const getCalendarItem = (date: Date) => {
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-
-    const dayItem = Calendar[month][day];
-    return dayItem;
 };
 
 export const useSchedule = () => {

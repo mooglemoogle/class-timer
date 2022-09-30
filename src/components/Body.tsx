@@ -2,6 +2,7 @@ import { FC, useCallback, useLayoutEffect, useState, useRef, memo } from 'react'
 import { v4 as uuidv4 } from 'uuid';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import './Body.css';
 
 import { DailySchedule, DayType } from '../config/BellSchedule';
@@ -10,6 +11,9 @@ import { Timer } from './Timer';
 import { useCurrentDate } from '../hooks/useCurrentDate';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { CalendarItem } from '../config/Calendar';
+import { useToggle } from '../hooks/useToggle';
+import { Drawer } from '@mui/material';
+import { CalendarView } from './CalendarView';
 
 export interface TimerItem {
     targetTime?: Date;
@@ -52,6 +56,7 @@ export const Body: FC<BodyProps> = memo(({ currentSchedule, dayType, dayItem }) 
     const [bigSizeRatio, setBigSizeRatio] = useState(1);
     const [smallSizeRatio, setSmallSizeRatio] = useState(1);
     const [timers, setTimers] = useLocalStorage<TimerItem[]>('timers', [], serializeTimers, deserializeTimers);
+    const [showCalendar, toggleShowCalendar] = useToggle(false);
 
     useLayoutEffect(() => {
         const updateSizeRatio = () => {
@@ -139,6 +144,21 @@ export const Body: FC<BodyProps> = memo(({ currentSchedule, dayType, dayItem }) 
             >
                 <AddIcon />
             </Fab>
+            <Fab
+                sx={{
+                    position: 'absolute',
+                    right: '5px',
+                    top: '50px',
+                }}
+                onClick={toggleShowCalendar}
+                size="small"
+                color="secondary"
+            >
+                <CalendarMonthIcon />
+            </Fab>
+            <Drawer open={showCalendar} onClose={toggleShowCalendar} anchor="right">
+                <CalendarView />
+            </Drawer>
         </div>
     );
 });
