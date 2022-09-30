@@ -9,6 +9,7 @@ import { ClassPeriodTimer } from './ClassPeriodTimer';
 import { Timer } from './Timer';
 import { useCurrentDate } from '../hooks/useCurrentDate';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import { CalendarItem } from '../config/Calendar';
 
 export interface TimerItem {
     targetTime?: Date;
@@ -21,6 +22,7 @@ export interface TimerItem {
 export interface BodyProps {
     currentSchedule: DailySchedule | undefined;
     dayType: DayType | undefined;
+    dayItem: CalendarItem;
 }
 
 const serializeTimers = (timers: TimerItem[]) => {
@@ -43,7 +45,7 @@ const deserializeTimers = (val: string) => {
     });
 };
 
-export const Body: FC<BodyProps> = memo(({ currentSchedule, dayType }) => {
+export const Body: FC<BodyProps> = memo(({ currentSchedule, dayType, dayItem }) => {
     const currentDate = useCurrentDate();
     const currentDateRef = useRef(currentDate);
     currentDateRef.current = currentDate;
@@ -123,7 +125,7 @@ export const Body: FC<BodyProps> = memo(({ currentSchedule, dayType }) => {
                 </div>
             ) : null}
             <div className="class-period-container" style={classTimerStyle}>
-                <ClassPeriodTimer currentSchedule={currentSchedule} dayType={dayType} />
+                <ClassPeriodTimer currentSchedule={currentSchedule} dayType={dayType} dayItem={dayItem} />
             </div>
             <Fab
                 sx={{

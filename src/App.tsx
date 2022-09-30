@@ -5,7 +5,7 @@ import { Body } from './components/Body';
 import { useSchedule } from './hooks/useSchedule';
 
 const App: FC = () => {
-    const { effectiveSchedule, overrideSchedule, dayType } = useSchedule();
+    const { effectiveSchedule, overrideSchedule, dayType, dayItem } = useSchedule();
     return (
         <div
             className="app-container"
@@ -14,7 +14,7 @@ const App: FC = () => {
             }}
         >
             <Header currentSchedule={effectiveSchedule} overrideSchedule={overrideSchedule} />
-            <Body currentSchedule={effectiveSchedule} dayType={dayType} />
+            <Body currentSchedule={effectiveSchedule} dayType={dayType} dayItem={dayItem} />
         </div>
     );
 };

@@ -1,7 +1,7 @@
 import { addDays, differenceInMilliseconds, startOfDay, isAfter } from 'date-fns';
 import { useCallback, useState } from 'react';
 import { DailySchedule, DayType, OffDays, Schedules } from '../config/BellSchedule';
-import { Calendar } from '../config/Calendar';
+import { Calendar, CalendarItem } from '../config/Calendar';
 import { getDate } from '../helpers';
 import { useInterval } from './useInterval';
 
@@ -11,39 +11,41 @@ export interface ScheduleItem {
     schedule?: DailySchedule;
 }
 
+const getSchedule = (dayItem: CalendarItem) => {
+    if (OffDays.includes(dayItem.dt)) {
+        return {
+            dayType: dayItem.dt,
+            isOff: true,
+        } as ScheduleItem;
+    }
+    const schedule = Schedules.find((schedule) => schedule.name === dayItem.dt);
+    if (!schedule) {
+        return undefined;
+    } else {
+        return {
+            dayType: schedule.name,
+            isOff: false,
+            schedule,
+        } as ScheduleItem;
+    }
+};
+
+const getCalendarItem = (date: Date) => {
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+
+    const dayItem = Calendar[month][day];
+    return dayItem;
+};
+
 export const useSchedule = () => {
     const date = getDate();
 
     const tomorrow = startOfDay(addDays(date, 1));
     const interval = differenceInMilliseconds(tomorrow, date) + 100;
 
-    const getSchedule = (date: Date) => {
-        const month = date.getMonth() + 1;
-        const day = date.getDate();
-
-        const dayItem = Calendar[month][day];
-        if (!dayItem) {
-            return undefined;
-        }
-        if (OffDays.includes(dayItem.dt)) {
-            return {
-                dayType: dayItem.dt,
-                isOff: true,
-            } as ScheduleItem;
-        }
-        const schedule = Schedules.find((schedule) => schedule.name === dayItem.dt);
-        if (!schedule) {
-            return undefined;
-        } else {
-            return {
-                dayType: schedule.name,
-                isOff: false,
-                schedule,
-            } as ScheduleItem;
-        }
-    };
-
-    const [schedule, setSchedule] = useState(getSchedule(date));
+    const [dayItem, setDayItem] = useState(getCalendarItem(date));
+    const [schedule, setSchedule] = useState(getSchedule(dayItem));
     const [scheduleOverride, setScheduleOverride] = useState(() => {
         const existingOverride = JSON.parse(localStorage.getItem('scheduleOverride') || 'null');
         if (existingOverride) {
@@ -77,9 +79,16 @@ export const useSchedule = () => {
         [tomorrow]
     );
 
+    const clearOverride = useCallback(() => {
+        setScheduleOverride(null);
+        localStorage.removeItem('scheduleOverride');
+    }, [setScheduleOverride]);
+
     useInterval(() => {
         const date = getDate();
-        const schedule = getSchedule(date);
+        const dayItem = getCalendarItem(date);
+        const schedule = getSchedule(dayItem);
+        setDayItem(dayItem);
         setSchedule(schedule);
     }, interval);
 
@@ -89,7 +98,9 @@ export const useSchedule = () => {
 
     return {
         ...schedule,
+        dayItem,
         effectiveSchedule,
         overrideSchedule,
+        clearOverride,
     };
 };

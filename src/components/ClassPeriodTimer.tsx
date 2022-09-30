@@ -6,14 +6,16 @@ import { DailySchedule, DayType } from '../config/BellSchedule';
 import { isAfter, isBefore, getDateFromDuration } from '../helpers';
 import { TimeRemaining } from './TimeRemaining';
 import { useCurrentDate } from '../hooks/useCurrentDate';
+import { CalendarItem } from '../config/Calendar';
 
 export interface ClassPeriodTimerProps {
     className?: string;
     currentSchedule: DailySchedule | undefined;
     dayType: DayType | undefined;
+    dayItem: CalendarItem;
 }
 
-export const ClassPeriodTimer: FC<ClassPeriodTimerProps> = memo(({ className, currentSchedule }) => {
+export const ClassPeriodTimer: FC<ClassPeriodTimerProps> = memo(({ className, currentSchedule, dayItem }) => {
     const currentDate = useCurrentDate();
 
     if (!currentSchedule) {
@@ -53,6 +55,7 @@ export const ClassPeriodTimer: FC<ClassPeriodTimerProps> = memo(({ className, cu
     return (
         <div className={classNames(className, 'class-period-timer')}>
             <div className="today-message">{`Today is a ${currentSchedule.name} day`}</div>
+            {dayItem.hn ? <div className="holiday-message">{`Observing ${dayItem.hn}`}</div> : null}
             <div className="period-message">{message}</div>
             <div className="time-remaining-container">
                 {targetTime && (

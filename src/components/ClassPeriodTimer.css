@@ -15,6 +15,12 @@
     font-weight: bold;
 }
 
+.class-period-timer .holiday-message {
+    font-size: 40px;
+    text-align: center;
+    margin-top: 10px;
+}
+
 .class-period-timer .period-message {
     font-size: 40px;
     text-align: center;
