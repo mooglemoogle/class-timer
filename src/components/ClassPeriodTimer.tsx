@@ -1,12 +1,13 @@
 import classNames from 'classnames';
-import { Duration } from 'date-fns';
-import { FC, memo } from 'react';
+import { addSeconds, Duration } from 'date-fns';
+import { FC, useMemo, memo, useContext } from 'react';
 import './ClassPeriodTimer.css';
-import { DailySchedule, DayType } from '../config/BellSchedule';
+import { ClassPeriod, DailySchedule, DayType } from '../config/BellSchedule';
 import { isAfter, isBefore, getDateFromDuration } from '../helpers';
 import { TimeRemaining } from './TimeRemaining';
 import { useCurrentDate } from '../hooks/useCurrentDate';
 import { CalendarItem } from '../config/Calendar';
+import { AppContext } from '../AppContext';
 
 export interface ClassPeriodTimerProps {
     className?: string;
@@ -16,13 +17,41 @@ export interface ClassPeriodTimerProps {
 }
 
 export const ClassPeriodTimer: FC<ClassPeriodTimerProps> = memo(({ className, currentSchedule, dayItem }) => {
+    const { bellDelay } = useContext(AppContext);
     const currentDate = useCurrentDate();
+
+    const delayedSchedule = useMemo(() => {
+        if (currentSchedule) {
+            return currentSchedule.schedule.map((period) => {
+                const delayedPeriod: ClassPeriod = {
+                    ...period,
+                    start: {
+                        ...period.start,
+                        seconds: (period.start.seconds || 0) + bellDelay,
+                    },
+                    end: {
+                        ...period.end,
+                        seconds: (period.end.seconds || 0) + bellDelay,
+                    },
+                };
+                if (period.break) {
+                    delayedPeriod.break = {
+                        ...period.break,
+                        seconds: (period.break.seconds || 0) + bellDelay,
+                    };
+                }
+                return delayedPeriod;
+            });
+        } else {
+            return [] as ClassPeriod[];
+        }
+    }, [currentSchedule, bellDelay]);
 
     if (!currentSchedule) {
         return null;
     }
 
-    const currentPeriodIndex = currentSchedule.schedule.findIndex((period) => {
+    const currentPeriodIndex = delayedSchedule.findIndex((period) => {
         return isAfter(currentDate, period.start) && isBefore(currentDate, period.end);
     });
 
@@ -30,22 +59,22 @@ export const ClassPeriodTimer: FC<ClassPeriodTimerProps> = memo(({ className, cu
     let message: string;
 
     if (currentPeriodIndex < 0) {
-        if (isBefore(currentDate, currentSchedule.schedule[0].start)) {
-            targetTime = currentSchedule.schedule[0].start;
-            message = `Class starts in`;
+        if (isBefore(currentDate, delayedSchedule[0].start)) {
+            targetTime = delayedSchedule[0].start;
+            message = `Class starts soon`;
         } else {
             message = `School's over! Go home!`;
         }
     } else {
-        const currentPeriod = currentSchedule.schedule[currentPeriodIndex];
+        const currentPeriod = delayedSchedule[currentPeriodIndex];
         if (currentPeriod.break && isBefore(currentDate, currentPeriod.break)) {
             targetTime = currentPeriod.break;
             message = `This is ${currentPeriod.name}`;
         } else {
             targetTime = currentPeriod.end;
             if (currentPeriod.break) {
-                const nextPeriod = currentSchedule.schedule[currentPeriodIndex + 1];
-                message = `Time until ${nextPeriod.name}:`;
+                const nextPeriod = delayedSchedule[currentPeriodIndex + 1];
+                message = `${nextPeriod.name} coming up`;
             } else {
                 message = `This is ${currentPeriod.name}`;
             }

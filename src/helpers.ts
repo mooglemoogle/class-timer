@@ -1,10 +1,35 @@
 import { Duration, startOfDay, add, isAfter as dfnsIsAfter, isBefore as dfnsIsBefore, format } from 'date-fns';
 
-const demoStartTime: number | undefined = undefined;
-const demoRealStartTime: Date = new Date();
+export const getStoredNum = (key: string, defaultVal?: number) => {
+    const storedVal = window.localStorage.getItem(key);
+    return storedVal ? parseInt(storedVal) : defaultVal;
+};
+
+export const getStoredBool = (key: string, defaultVal?: boolean) => {
+    const storedVal = window.localStorage.getItem(key);
+    return storedVal === null ? defaultVal : JSON.parse(storedVal);
+};
+
+let useDemoStartTime: boolean = false;
+let demoStartTime: number | undefined = undefined;
+let demoRealStartTime: Date = new Date();
+
+export const resetDemoStartTime = () => {
+    demoStartTime = getStoredNum('demoStartTime', Date.now());
+};
+resetDemoStartTime();
+
+export const resetUseDemoStartTime = () => {
+    useDemoStartTime = getStoredBool('useDemoStartTime', false);
+};
+resetUseDemoStartTime();
+
+export const resetDemoRealStartTime = () => {
+    demoRealStartTime = new Date();
+};
 
 export const getDate = () => {
-    if (!demoStartTime) {
+    if (!useDemoStartTime || !demoStartTime) {
         return new Date();
     } else {
         const d = new Date();
@@ -27,7 +52,7 @@ export const getToday = () => {
 };
 
 export const getWeekday = (date: Date, short?: boolean) => {
-    return format(date, short ? 'EEE' : 'EEE');
+    return format(date, short ? 'EEE' : 'EEEE');
 };
 
 export const getMonth = (date: Date, short?: boolean) => {

@@ -1,4 +1,4 @@
-import { addDays, differenceInMilliseconds, startOfDay, isAfter } from 'date-fns';
+import { addDays, differenceInMilliseconds, startOfDay } from 'date-fns';
 import { useCallback, useState } from 'react';
 import { DailySchedule, DayType, OffDays, Schedules } from '../config/BellSchedule';
 import { CalendarItem, getCalendarItem } from '../config/Calendar';
@@ -30,7 +30,7 @@ const getSchedule = (dayItem: CalendarItem) => {
     }
 };
 
-export const useSchedule = () => {
+export const useSchedule = (useScheduleOverride: boolean, scheduleOverride: DayType | undefined, overrideUntil: number) => {
     const date = getDate();
 
     const tomorrow = startOfDay(addDays(date, 1));
@@ -38,43 +38,10 @@ export const useSchedule = () => {
 
     const [dayItem, setDayItem] = useState(getCalendarItem(date));
     const [schedule, setSchedule] = useState(getSchedule(dayItem));
-    const [scheduleOverride, setScheduleOverride] = useState(() => {
-        const existingOverride = JSON.parse(localStorage.getItem('scheduleOverride') || 'null');
-        if (existingOverride) {
-            const overrideUntil = new Date(existingOverride.until || 0);
-            if (isAfter(date, overrideUntil)) {
-                localStorage.removeItem('scheduleOverride');
-                return null;
-            }
-            return {
-                until: overrideUntil,
-                name: existingOverride.name,
-            };
-        }
-        return null;
-    });
-
-    const overrideSchedule = useCallback(
-        (name: string) => {
-            setScheduleOverride({
-                until: tomorrow,
-                name,
-            });
-            localStorage.setItem(
-                'scheduleOverride',
-                JSON.stringify({
-                    name,
-                    until: tomorrow.getTime(),
-                })
-            );
-        },
-        [tomorrow]
-    );
 
     const clearOverride = useCallback(() => {
-        setScheduleOverride(null);
         localStorage.removeItem('scheduleOverride');
-    }, [setScheduleOverride]);
+    }, []);
 
     useInterval(() => {
         const date = getDate();
@@ -84,15 +51,15 @@ export const useSchedule = () => {
         setSchedule(schedule);
     }, interval);
 
-    const effectiveSchedule = scheduleOverride
-        ? Schedules.find((schedule) => schedule.name === scheduleOverride.name) || schedule?.schedule
-        : schedule?.schedule;
+    const effectiveSchedule =
+        useScheduleOverride && scheduleOverride && date.getTime() < overrideUntil
+            ? Schedules.find((schedule) => schedule.name === scheduleOverride) || schedule?.schedule
+            : schedule?.schedule;
 
     return {
         ...schedule,
         dayItem,
         effectiveSchedule,
-        overrideSchedule,
         clearOverride,
     };
 };
