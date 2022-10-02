@@ -1,5 +1,5 @@
 import { addDays, differenceInMilliseconds, startOfDay } from 'date-fns';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { DailySchedule, DayType, OffDays, Schedules } from '../config/BellSchedule';
 import { CalendarItem, getCalendarItem } from '../config/Calendar';
 import { getDate } from '../helpers';
@@ -24,7 +24,13 @@ const getSchedule = (dayItem: CalendarItem) => {
     }
 };
 
-export const useSchedule = (useScheduleOverride: boolean, scheduleOverride: DayType | undefined, overrideUntil: number) => {
+export const useSchedule = (
+    useScheduleOverride: boolean,
+    scheduleOverride: DayType | undefined,
+    overrideUntil: number,
+    useDemoStartTime: boolean,
+    demoStartTime: number
+) => {
     const date = getDate();
 
     const tomorrow = startOfDay(addDays(date, 1));
@@ -37,13 +43,18 @@ export const useSchedule = (useScheduleOverride: boolean, scheduleOverride: DayT
         localStorage.removeItem('scheduleOverride');
     }, []);
 
-    useInterval(() => {
+    const resetSchedule = () => {
         const date = getDate();
         const dayItem = getCalendarItem(date);
         const schedule = getSchedule(dayItem);
         setDayItem(dayItem);
         setSchedule(schedule);
-    }, interval);
+    };
+
+    useInterval(resetSchedule, interval);
+
+    const shouldReset = useDemoStartTime ? demoStartTime : 0;
+    useEffect(resetSchedule, [shouldReset]);
 
     const effectiveSchedule =
         useScheduleOverride && scheduleOverride && date.getTime() < overrideUntil

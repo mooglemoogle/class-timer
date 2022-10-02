@@ -37,7 +37,7 @@ const App: FC = () => {
         [demoStartTime, useDemoStartTime, bellDelay, useOverrideSchedule, overrideSchedule, overrideUntil]
     );
 
-    const { effectiveSchedule, dayType, dayItem } = useSchedule(useOverrideSchedule, overrideSchedule, overrideUntil);
+    const { effectiveSchedule, dayType, dayItem } = useSchedule(useOverrideSchedule, overrideSchedule, overrideUntil, useDemoStartTime, demoStartTime);
     return (
         <AppContext.Provider value={contextValue}>
             <div
