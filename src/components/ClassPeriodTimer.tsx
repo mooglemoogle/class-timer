@@ -59,7 +59,9 @@ export const ClassPeriodTimer: FC<ClassPeriodTimerProps> = memo(({ className, cu
     let message: string;
 
     if (currentPeriodIndex < 0) {
-        if (isBefore(currentDate, delayedSchedule[0].start)) {
+        if (delayedSchedule.length === 0) {
+            message = `No school today!`;
+        } else if (isBefore(currentDate, delayedSchedule[0].start)) {
             targetTime = delayedSchedule[0].start;
             message = `Class starts soon`;
         } else {

@@ -12,12 +12,6 @@ export interface ScheduleItem {
 }
 
 const getSchedule = (dayItem: CalendarItem) => {
-    if (OffDays.includes(dayItem.dt)) {
-        return {
-            dayType: dayItem.dt,
-            isOff: true,
-        } as ScheduleItem;
-    }
     const schedule = Schedules.find((schedule) => schedule.name === dayItem.dt);
     if (!schedule) {
         return undefined;
